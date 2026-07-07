@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MCOfflineChat.Mobile.ViewModels"
+             xmlns:models="clr-namespace:MCOfflineChat.Mobile.Models"
+             x:Class="MCOfflineChat.Mobile.Views.DocumentsPage"
+             x:DataType="vm:DocumentsViewModel"
+             Title="Documents"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16" RowSpacing="12">
+        <VerticalStackLayout Grid.Row="0" Spacing="6">
+            <Label Text="DOCUMENT EDITOR" Style="{StaticResource NeonTitleLabel}" Margin="0,8,0,0" />
+            <Label Text="{Binding StatusText}" Style="{StaticResource MutedLabel}" />
+            <Label Text="{Binding LanguageHint}" Style="{StaticResource MutedLabel}" FontSize="12" />
+        </VerticalStackLayout>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="14">
+                <Frame Style="{StaticResource CardFrame}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Recent Documents" TextColor="{StaticResource AccentColor}" FontAttributes="Bold" />
+                        <CollectionView ItemsSource="{Binding Documents}"
+                                        SelectedItem="{Binding SelectedDocument, Mode=TwoWay}"
+                                        HeightRequest="180">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:LocalDocumentItem">
+                                    <Frame Padding="10" Margin="0,0,0,8" BackgroundColor="{StaticResource SurfaceColor}" BorderColor="{StaticResource SurfaceLightColor}">
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label Text="{Binding DisplayName}" TextColor="{StaticResource TextColor}" FontAttributes="Bold" />
+                                            <Label Text="{Binding Subtitle}" Style="{StaticResource MutedLabel}" />
+                                        </VerticalStackLayout>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame Style="{StaticResource CardFrame}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Create or Edit" TextColor="{StaticResource AccentColor}" FontAttributes="Bold" />
+
+                        <Picker ItemsSource="{Binding Templates}"
+                                SelectedItem="{Binding SelectedTemplate}"
+                                Title="Choose a file type"
+                                TextColor="{StaticResource TextColor}"
+                                BackgroundColor="{StaticResource SurfaceColor}" />
+
+                        <Entry Text="{Binding NewDocumentName}"
+                               Placeholder="Document name"
+                               TextColor="{StaticResource TextColor}"
+                               PlaceholderColor="{StaticResource TextMutedColor}"
+                               BackgroundColor="{StaticResource SurfaceColor}" />
+
+                        <Editor Text="{Binding EditorContent}"
+                                AutoSize="TextChanges"
+                                HeightRequest="340"
+                                TextColor="{StaticResource TextColor}"
+                                Placeholder="Write, paste, or edit source code..."
+                                BackgroundColor="{StaticResource SurfaceColor}" />
+
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                            <Button Text="New" Command="{Binding NewDocumentCommand}" Style="{StaticResource SecondaryButton}" />
+                            <Button Grid.Column="1" Text="Import" Command="{Binding ImportDocumentCommand}" Style="{StaticResource SecondaryButton}" />
+                            <Button Grid.Column="2" Text="Save" Command="{Binding SaveDocumentCommand}" Style="{StaticResource PrimaryButton}" />
+                        </Grid>
+
+                        <Button Text="Delete Selected"
+                                Command="{Binding DeleteDocumentCommand}"
+                                Style="{StaticResource DangerButton}" />
+                    </VerticalStackLayout>
+                </Frame>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

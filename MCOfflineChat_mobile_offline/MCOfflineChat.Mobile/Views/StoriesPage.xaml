@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MCOfflineChat.Mobile.ViewModels"
+             xmlns:models="clr-namespace:MCOfflineChat.Mobile.Models"
+             x:Class="MCOfflineChat.Mobile.Views.StoriesPage"
+             x:DataType="vm:StoriesViewModel"
+             Title="Stories"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16" RowSpacing="12">
+        <VerticalStackLayout Grid.Row="0" Spacing="6">
+            <Label Text="STORY &amp; CHARACTER STUDIO" Style="{StaticResource NeonTitleLabel}" Margin="0,8,0,0" />
+            <Label Text="{Binding StatusText}" Style="{StaticResource MutedLabel}" />
+        </VerticalStackLayout>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="14">
+
+                <Frame Style="{StaticResource CardFrame}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Saved Stories" TextColor="{StaticResource AccentColor}" FontAttributes="Bold" />
+                        <CollectionView ItemsSource="{Binding Stories}"
+                                        SelectedItem="{Binding SelectedStory, Mode=TwoWay}"
+                                        HeightRequest="190">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:StoryProfileItem">
+                                    <Frame Padding="10" Margin="0,0,0,8" BackgroundColor="{StaticResource SurfaceColor}" BorderColor="{StaticResource SurfaceLightColor}">
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label Text="{Binding DisplayTitle}" TextColor="{StaticResource TextColor}" FontAttributes="Bold" />
+                                            <Label Text="{Binding Subtitle}" Style="{StaticResource MutedLabel}" />
+                                        </VerticalStackLayout>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame Style="{StaticResource CardFrame}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="World Builder" TextColor="{StaticResource AccentColor}" FontAttributes="Bold" />
+
+                        <Entry Text="{Binding Title}" Placeholder="Story title" />
+                        <Entry Text="{Binding WorldName}" Placeholder="World name" />
+                        <Entry Text="{Binding WorldType}" Placeholder="World type (Earth, planet, realm)" />
+                        <Entry Text="{Binding WorldTime}" Placeholder="World time (fantasy, historical, futuristic)" />
+                        <Entry Text="{Binding WorldInhabitants}" Placeholder="World inhabitants (humans, anthro, alien)" />
+                        <Entry Text="{Binding TerrainType}" Placeholder="Terrain type (islands, city, space, forest)" />
+                        <Entry Text="{Binding TagsText}" Placeholder="Tags (comma separated, up to 50)" />
+                        <Editor Text="{Binding MagicSystem}" AutoSize="TextChanges" HeightRequest="90" Placeholder="Magic system" />
+                        <Editor Text="{Binding HardWorldRules}" AutoSize="TextChanges" HeightRequest="90" Placeholder="Hard world rules" />
+                        <Editor Text="{Binding Prologue}" AutoSize="TextChanges" HeightRequest="110" Placeholder="Story prologue" />
+                        <Editor Text="{Binding StorySummary}" AutoSize="TextChanges" HeightRequest="90" Placeholder="Story summary" />
+                        <Editor Text="{Binding Notes}" AutoSize="TextChanges" HeightRequest="80" Placeholder="Story notes" />
+
+                        <Frame Padding="0" BackgroundColor="{StaticResource SurfaceColor}" BorderColor="{StaticResource SurfaceLightColor}">
+                            <Grid HeightRequest="220">
+                                <Image Source="{Binding ImagePath}" Aspect="AspectFill" Opacity="0.95" />
+                                <Button Text="Tap to add / replace story image"
+                                        Command="{Binding ChooseImageCommand}"
+                                        BackgroundColor="#66000000"
+                                        TextColor="{StaticResource TextColor}"
+                                        CornerRadius="0"
+                                        HorizontalOptions="Fill"
+                                        VerticalOptions="Fill" />
+                            </Grid>
+                        </Frame>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame Style="{StaticResource CardFrame}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Character Builder" TextColor="{StaticResource AccentColor}" FontAttributes="Bold" />
+
+                        <CollectionView ItemsSource="{Binding Characters}"
+                                        SelectedItem="{Binding SelectedCharacter, Mode=TwoWay}"
+                                        HeightRequest="170">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:StoryCharacterItem">
+                                    <Frame Padding="10" Margin="0,0,0,8" BackgroundColor="{StaticResource SurfaceColor}" BorderColor="{StaticResource SurfaceLightColor}">
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label Text="{Binding FriendlyName}" TextColor="{StaticResource TextColor}" FontAttributes="Bold" />
+                                            <Label Text="{Binding Summary}" Style="{StaticResource MutedLabel}" />
+                                        </VerticalStackLayout>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <Entry Text="{Binding CharacterName}" Placeholder="Name" />
+                        <Entry Text="{Binding CharacterSurname}" Placeholder="Surname" />
+                        <Entry Text="{Binding CharacterSpecies}" Placeholder="Species" />
+                        <Entry Text="{Binding CharacterAge}" Placeholder="Age" />
+                        <Entry Text="{Binding CharacterStyle}" Placeholder="Style" />
+                        <Entry Text="{Binding CharacterTone}" Placeholder="Tone" />
+                        <Editor Text="{Binding CharacterDescription}" AutoSize="TextChanges" HeightRequest="90" Placeholder="Description" />
+                        <Editor Text="{Binding CharacterClothes}" AutoSize="TextChanges" HeightRequest="80" Placeholder="Clothes" />
+                        <Editor Text="{Binding CharacterItemsText}" AutoSize="TextChanges" HeightRequest="80" Placeholder="Items (comma separated, up to 50)" />
+                        <Editor Text="{Binding CharacterMagicalAbilities}" AutoSize="TextChanges" HeightRequest="80" Placeholder="Magical abilities" />
+                        <Editor Text="{Binding CharacterLikes}" AutoSize="TextChanges" HeightRequest="80" Placeholder="Likes" />
+                        <Editor Text="{Binding CharacterDislikes}" AutoSize="TextChanges" HeightRequest="80" Placeholder="Dislikes" />
+                        <Editor Text="{Binding CharacterFears}" AutoSize="TextChanges" HeightRequest="80" Placeholder="Fears" />
+                        <Entry Text="{Binding CharacterLocation}" Placeholder="Starting location" />
+
+                        <Frame Padding="0" BackgroundColor="{StaticResource SurfaceColor}" BorderColor="{StaticResource SurfaceLightColor}">
+                            <Grid HeightRequest="200">
+                                <Image Source="{Binding CharacterAvatarPath}" Aspect="AspectFill" Opacity="0.95" />
+                                <Button Text="Tap to add / replace character avatar"
+                                        Command="{Binding AddCharacterAvatarCommand}"
+                                        BackgroundColor="#66000000"
+                                        TextColor="{StaticResource TextColor}"
+                                        CornerRadius="0"
+                                        HorizontalOptions="Fill"
+                                        VerticalOptions="Fill" />
+                            </Grid>
+                        </Frame>
+
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                            <Button Text="Save Character" Command="{Binding AddOrUpdateCharacterCommand}" Style="{StaticResource PrimaryButton}" />
+                            <Button Grid.Column="1" Text="Log Item Event" Command="{Binding AddItemEventCommand}" Style="{StaticResource SecondaryButton}" />
+                        </Grid>
+
+                        <Entry Text="{Binding ItemEventAction}" Placeholder="acquired / used / lost" />
+                        <Entry Text="{Binding ItemEventName}" Placeholder="Item name" />
+                        <Editor Text="{Binding ItemEventNotes}" AutoSize="TextChanges" HeightRequest="70" Placeholder="Item notes" />
+
+                        <CollectionView ItemsSource="{Binding ItemLogs}" HeightRequest="140">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:CharacterItemEvent">
+                                    <Frame Padding="8" Margin="0,0,0,8" BackgroundColor="{StaticResource SurfaceColor}" BorderColor="{StaticResource SurfaceLightColor}">
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label Text="{Binding Display}" TextColor="{StaticResource TextColor}" FontSize="12" />
+                                            <Label Text="{Binding Notes}" Style="{StaticResource MutedLabel}" />
+                                        </VerticalStackLayout>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame Style="{StaticResource CardFrame}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Chapter Metadata" TextColor="{StaticResource AccentColor}" FontAttributes="Bold" />
+                        <CollectionView ItemsSource="{Binding Chapters}"
+                                        SelectedItem="{Binding SelectedChapter, Mode=TwoWay}"
+                                        HeightRequest="170">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:StoryChapterItem">
+                                    <Frame Padding="10" Margin="0,0,0,8" BackgroundColor="{StaticResource SurfaceColor}" BorderColor="{StaticResource SurfaceLightColor}">
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label Text="{Binding DisplayTitle}" TextColor="{StaticResource TextColor}" FontAttributes="Bold" />
+                                            <Label Text="{Binding Preview}" Style="{StaticResource MutedLabel}" />
+                                        </VerticalStackLayout>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <Entry Text="{Binding ChapterTitle}" Placeholder="Chapter title" />
+                        <Editor Text="{Binding ChapterContent}" AutoSize="TextChanges" HeightRequest="110" Placeholder="Previous chapter or metadata" />
+                        <Button Text="Add Chapter Metadata" Command="{Binding AddChapterCommand}" Style="{StaticResource SecondaryButton}" />
+                    </VerticalStackLayout>
+                </Frame>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Grid Grid.Row="2" ColumnDefinitions="*,*,*" ColumnSpacing="8">
+            <Button Text="New" Command="{Binding NewStoryCommand}" Style="{StaticResource SecondaryButton}" />
+            <Button Grid.Column="1" Text="Save" Command="{Binding SaveStoryCommand}" Style="{StaticResource PrimaryButton}" />
+            <Button Grid.Column="2" Text="Delete" Command="{Binding DeleteStoryCommand}" Style="{StaticResource DangerButton}" />
+        </Grid>
+    </Grid>
+</ContentPage>

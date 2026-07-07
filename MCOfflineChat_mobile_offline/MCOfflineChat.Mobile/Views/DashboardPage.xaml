@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MCOfflineChat.Mobile.ViewModels"
+             x:Class="MCOfflineChat.Mobile.Views.DashboardPage"
+             x:DataType="vm:DashboardViewModel"
+             Title="Dashboard"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+            <Label Text="{Binding Headline}" Style="{StaticResource NeonTitleLabel}" Margin="0,8,0,4" />
+            <Label Text="{Binding OfflineStatus}" Style="{StaticResource SubtitleLabel}" />
+            <Label Text="{Binding RuntimeHint}" Style="{StaticResource MutedLabel}" />
+
+            <Frame Style="{StaticResource CardFrame}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Visible Tabs" TextColor="{StaticResource AccentColor}" FontAttributes="Bold" />
+                    <Label Text="{Binding TabsSummary}" Style="{StaticResource BodyLabel}" LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame Style="{StaticResource CardFrame}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Local AI" TextColor="{StaticResource AccentColor}" FontSize="16" FontAttributes="Bold" />
+                    <Label Text="{Binding ModelStatus}" Style="{StaticResource BodyLabel}" />
+                    <Label Text="{Binding AssistantName, StringFormat='Assistant: {0}'}" Style="{StaticResource MutedLabel}" />
+                    <Label Text="{Binding TtsEnabled, StringFormat='Text-to-speech: {0}'}" Style="{StaticResource MutedLabel}" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Frame Style="{StaticResource CardFrame}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Documents" TextColor="{StaticResource AccentColor}" FontSize="16" FontAttributes="Bold" />
+                        <Label Text="{Binding DocumentCount}" Style="{StaticResource TitleLabel}" />
+                        <Label Text="Saved local files" Style="{StaticResource MutedLabel}" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame Grid.Column="1" Style="{StaticResource CardFrame}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Stories" TextColor="{StaticResource AccentColor}" FontSize="16" FontAttributes="Bold" />
+                        <Label Text="{Binding StoryCount}" Style="{StaticResource TitleLabel}" />
+                        <Label Text="Worlds and characters" Style="{StaticResource MutedLabel}" />
+                    </VerticalStackLayout>
+                </Frame>
+            </Grid>
+
+            <Frame Style="{StaticResource CardFrame}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Latest Story" TextColor="{StaticResource AccentColor}" FontSize="16" FontAttributes="Bold" />
+                    <Grid HeightRequest="180">
+                        <Image Source="{Binding LastStoryImagePath}" Aspect="AspectFill" Opacity="0.95" />
+                        <VerticalStackLayout Padding="12" VerticalOptions="End" BackgroundColor="#80000000" Spacing="4">
+                            <Label Text="{Binding LastStoryTitle}" TextColor="White" FontAttributes="Bold" FontSize="18" />
+                            <Label Text="{Binding LastCharacterName, StringFormat='Lead character: {0}'}" TextColor="White" FontSize="12" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame Style="{StaticResource CardFrame}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Last Prompt" TextColor="{StaticResource AccentColor}" FontSize="16" FontAttributes="Bold" />
+                    <Label Text="{Binding LastSavedPrompt}" Style="{StaticResource BodyLabel}" LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

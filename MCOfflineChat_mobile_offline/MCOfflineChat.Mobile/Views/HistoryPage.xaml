@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MCOfflineChat.Mobile.ViewModels"
+             xmlns:models="clr-namespace:MCOfflineChat.Mobile.Models"
+             x:Class="MCOfflineChat.Mobile.Views.HistoryPage"
+             x:DataType="vm:HistoryViewModel"
+             Title="History"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="16" RowSpacing="12">
+        <VerticalStackLayout Grid.Row="0" Spacing="6">
+            <Label Text="WORK HISTORY" Style="{StaticResource NeonTitleLabel}" Margin="0,8,0,0" />
+            <Label Text="{Binding StatusText}" Style="{StaticResource MutedLabel}" />
+        </VerticalStackLayout>
+
+        <Frame Grid.Row="1" Style="{StaticResource CardFrame}">
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Open previous work" TextColor="{StaticResource AccentColor}" FontAttributes="Bold" />
+                <Label Text="Tap an item to jump back into chat, documents, or a story."
+                       Style="{StaticResource MutedLabel}" />
+            </VerticalStackLayout>
+        </Frame>
+
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding Items}"
+                        SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                        SelectionMode="Single">
+            <CollectionView.EmptyView>
+                <Label Text="Saved chats, documents, and stories will appear here."
+                       Style="{StaticResource MutedLabel}"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center"
+                       Margin="0,40,0,0" />
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:WorkHistoryItem">
+                    <Frame Style="{StaticResource CardFrame}" Margin="0,0,0,10">
+                        <VerticalStackLayout Spacing="8">
+                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                <Label Text="{Binding Title}"
+                                       TextColor="{StaticResource TextColor}"
+                                       FontSize="16"
+                                       FontAttributes="Bold" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding Kind}"
+                                       TextColor="{StaticResource AccentColor}"
+                                       FontAttributes="Bold" />
+                                <Label Grid.Row="1"
+                                       Text="{Binding Subtitle}"
+                                       Style="{StaticResource MutedLabel}" />
+                            </Grid>
+
+                            <Label Text="{Binding Preview}"
+                                   TextColor="{StaticResource TextColor}"
+                                   FontSize="13"
+                                   LineBreakMode="WordWrap" />
+
+                            <HorizontalStackLayout Spacing="8">
+                                <Button Text="Open Chat"
+                                        Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HistoryViewModel}}, Path=OpenAsChatCommand}"
+                                        CommandParameter="{Binding .}" />
+                                <Button Text="Open Document"
+                                        Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HistoryViewModel}}, Path=OpenAsDocumentCommand}"
+                                        CommandParameter="{Binding .}" />
+                                <Button Text="Open Story"
+                                        Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HistoryViewModel}}, Path=OpenAsStoryCommand}"
+                                        CommandParameter="{Binding .}" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MCOfflineChat.Mobile.ViewModels"
+             xmlns:models="clr-namespace:MCOfflineChat.Mobile.Models"
+             x:Class="MCOfflineChat.Mobile.Views.ChatPage"
+             x:DataType="vm:ChatViewModel"
+             Title="Chat"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Padding="0">
+        <Grid Grid.Row="0" Padding="16,12"
+              BackgroundColor="{StaticResource SurfaceColor}"
+              ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8">
+            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                <Label Text="MC Offline Chat"
+                       TextColor="{StaticResource AccentColor}"
+                       FontSize="18"
+                       FontAttributes="Bold" />
+                <Label Text="{Binding SessionTitle}" Style="{StaticResource MutedLabel}" />
+            </VerticalStackLayout>
+
+            <Button Grid.Column="1"
+                    Text="{Binding ModeLabel}"
+                    Command="{Binding ToggleOfflineModeCommand}"
+                    BackgroundColor="{Binding ModeColor}"
+                    TextColor="#1A1610"
+                    FontSize="10"
+                    FontAttributes="Bold"
+                    HeightRequest="32"
+                    Padding="10,0"
+                    CornerRadius="16" />
+
+            <Button Grid.Column="2"
+                    Text="Models"
+                    Command="{Binding ToggleModelPickerCommand}"
+                    BackgroundColor="{StaticResource SurfaceLightColor}"
+                    TextColor="{StaticResource AccentColor}"
+                    FontSize="12"
+                    HeightRequest="32"
+                    Padding="8,0"
+                    CornerRadius="16" />
+
+            <Button Grid.Column="3"
+                    Text="{Binding SelectedVoice, StringFormat='Voice: {0}'}"
+                    Command="{Binding ToggleVoicePickerCommand}"
+                    BackgroundColor="{StaticResource SurfaceLightColor}"
+                    TextColor="{StaticResource TextColor}"
+                    FontSize="10"
+                    HeightRequest="32"
+                    Padding="8,0"
+                    CornerRadius="16"
+                    IsVisible="{Binding TtsEnabled}" />
+
+            <Button Grid.Column="4"
+                    Text="{Binding TtsEnabled, Converter={StaticResource BoolToStringConverter}, ConverterParameter='TTS: On|TTS: Off'}"
+                    Command="{Binding ToggleTtsCommand}"
+                    BackgroundColor="{StaticResource SurfaceLightColor}"
+                    TextColor="{StaticResource TextColor}"
+                    FontSize="12"
+                    HeightRequest="32"
+                    Padding="8,0"
+                    CornerRadius="16" />
+
+            <Button Grid.Column="5"
+                    Text="Save"
+                    Command="{Binding SaveChatCommand}"
+                    BackgroundColor="{StaticResource SurfaceLightColor}"
+                    TextColor="{StaticResource TextColor}"
+                    FontSize="12"
+                    HeightRequest="32"
+                    Padding="8,0"
+                    CornerRadius="16" />
+        </Grid>
+
+        <Frame Grid.Row="1"
+               IsVisible="{Binding ShowModelPicker}"
+               BackgroundColor="{StaticResource SurfaceColor}"
+               BorderColor="{StaticResource SurfaceLightColor}"
+               CornerRadius="0"
+               Padding="12,8"
+               HasShadow="False">
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Select LLM Model"
+                       TextColor="{StaticResource AccentColor}"
+                       FontSize="13"
+                       FontAttributes="Bold" />
+                <Picker ItemsSource="{Binding AvailableModels}"
+                        SelectedItem="{Binding SelectedModel}"
+                        TextColor="{StaticResource TextColor}"
+                        BackgroundColor="{StaticResource BackgroundColor}"
+                        FontSize="14"
+                        Title="Choose model" />
+                <Label Text="{Binding ModelInfo}"
+                       TextColor="{StaticResource GreenColor}"
+                       FontSize="11"
+                       IsVisible="{Binding ModelInfo, Converter={StaticResource IsNotNullOrEmptyConverter}}" />
+            </VerticalStackLayout>
+        </Frame>
+
+        <Frame Grid.Row="1"
+               IsVisible="{Binding ShowVoicePicker}"
+               BackgroundColor="{StaticResource SurfaceColor}"
+               BorderColor="{StaticResource SurfaceLightColor}"
+               CornerRadius="0"
+               Padding="12,8"
+               HasShadow="False">
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Select TTS Voice"
+                       TextColor="{StaticResource AccentColor}"
+                       FontSize="13"
+                       FontAttributes="Bold" />
+                <Picker ItemsSource="{Binding AvailableVoices}"
+                        SelectedItem="{Binding SelectedVoice}"
+                        TextColor="{StaticResource TextColor}"
+                        BackgroundColor="{StaticResource BackgroundColor}"
+                        FontSize="14"
+                        Title="Choose voice" />
+            </VerticalStackLayout>
+        </Frame>
+
+        <Frame Grid.Row="2" Style="{StaticResource CardFrame}" Margin="16,0,16,0">
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Active Story Context" TextColor="{StaticResource AccentColor}" FontAttributes="Bold" />
+                <Picker ItemsSource="{Binding Stories}"
+                        SelectedItem="{Binding SelectedStory}"
+                        Title="Optional story context"
+                        ItemDisplayBinding="{Binding DisplayTitle}" />
+                <Label Text="{Binding StoryContextSummary}" Style="{StaticResource BodyLabel}" LineBreakMode="WordWrap" />
+                <Label Text="{Binding SessionHint}" Style="{StaticResource MutedLabel}" />
+                <HorizontalStackLayout Spacing="8">
+                    <Button Text="Restart Chat" Command="{Binding RestartChatCommand}" Style="{StaticResource SecondaryButton}" />
+                    <Button Text="Clear Messages" Command="{Binding ClearChatCommand}" Style="{StaticResource SecondaryButton}" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </Frame>
+
+        <CollectionView Grid.Row="3"
+                        ItemsSource="{Binding Messages}"
+                        x:Name="MessagesList"
+                        Margin="8,0"
+                        ItemsUpdatingScrollMode="KeepLastItemInView">
+            <CollectionView.EmptyView>
+                <Label Text="Start a conversation..."
+                       Style="{StaticResource MutedLabel}"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center"
+                       Margin="0,40,0,0" />
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:ChatMessageModel">
+                    <Grid Padding="8,4">
+                        <Frame BackgroundColor="{StaticResource SurfaceColor}"
+                               Padding="12"
+                               CornerRadius="16"
+                               HasShadow="False"
+                               BorderColor="{StaticResource SurfaceLightColor}"
+                               HorizontalOptions="Start">
+                            <Frame.Triggers>
+                                <DataTrigger TargetType="Frame" Binding="{Binding IsUser}" Value="True">
+                                    <Setter Property="HorizontalOptions" Value="End" />
+                                </DataTrigger>
+                            </Frame.Triggers>
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="{Binding Role}"
+                                       FontSize="11"
+                                       TextColor="{StaticResource AccentColor}"
+                                       FontAttributes="Bold" />
+                                <Label Text="{Binding DisplayText}"
+                                       LineBreakMode="WordWrap"
+                                       TextColor="{StaticResource TextColor}"
+                                       FontSize="14" />
+                                <Label Text="{Binding Timestamp, StringFormat='{0:HH:mm}'}"
+                                       FontSize="10"
+                                       TextColor="{StaticResource TextMutedColor}" />
+                            </VerticalStackLayout>
+                        </Frame>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Grid Grid.Row="4"
+              ColumnDefinitions="*,Auto"
+              ColumnSpacing="8"
+              Padding="16,8,16,16"
+              BackgroundColor="{StaticResource SurfaceColor}">
+            <Editor Text="{Binding MessageText}"
+                    Placeholder="Send a message..."
+                    AutoSize="TextChanges"
+                    HeightRequest="60"
+                    TextColor="{StaticResource TextColor}"
+                    BackgroundColor="{StaticResource BackgroundColor}" />
+
+            <Button Grid.Column="1"
+                    Text="Send"
+                    Command="{Binding SendMessageCommand}"
+                    BackgroundColor="{StaticResource AccentColor}"
+                    TextColor="#1A1610"
+                    FontAttributes="Bold"
+                    CornerRadius="16"
+                    Padding="18,12" />
+        </Grid>
+    </Grid>
+</ContentPage>

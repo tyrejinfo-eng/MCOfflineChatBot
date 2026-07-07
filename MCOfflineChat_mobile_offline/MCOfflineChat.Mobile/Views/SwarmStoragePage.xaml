@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MCOfflineChat.Mobile.ViewModels"
+             xmlns:models="clr-namespace:MCOfflineChat.Mobile.Models"
+             xmlns:converters="clr-namespace:MCOfflineChat.Mobile.Converters"
+             x:Class="MCOfflineChat.Mobile.Views.SwarmStoragePage"
+             x:DataType="vm:SwarmStorageViewModel"
+             BackgroundColor="{StaticResource BackgroundColor}"
+             Title="Swarm Storage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <converters:PercentToDecimalConverter x:Key="PercentToDecimalConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <!-- Full-page loading overlay when first populating -->
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Spacing="10" Padding="16">
+
+                <!-- ═══ HEADER ═══ -->
+                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center" Margin="0,4,0,0">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="SWARM INTELLIGENCE"
+                               Style="{StaticResource NeonTitleLabel}" />
+                        <Label Text="Distributed threat signal storage"
+                               TextColor="{StaticResource TextMutedColor}"
+                               FontSize="12" />
+                    </VerticalStackLayout>
+
+                <!-- Sync + Upload buttons -->
+                    <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                        <Button Text="📤 Upload"
+                                Command="{Binding UploadFileCommand}"
+                                IsEnabled="{Binding IsUploading, Converter={StaticResource InvertedBoolConverter}}"
+                                BackgroundColor="#3a86ff"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                FontSize="13"
+                                HeightRequest="36"
+                                Padding="12,0"
+                                CornerRadius="8" />
+                        <Button Text="⟳ Sync"
+                                Command="{Binding SyncNowCommand}"
+                                IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
+                                BackgroundColor="{StaticResource AccentColor}"
+                                TextColor="#1A1610"
+                                FontAttributes="Bold"
+                                FontSize="13"
+                                HeightRequest="36"
+                                Padding="14,0" />
+                    </HorizontalStackLayout>
+                </Grid>
+
+                <!-- ═══ STATUS CARD ═══ -->
+                <Frame BackgroundColor="{StaticResource SurfaceColor}"
+                       CornerRadius="12" Padding="14"
+                       BorderColor="Transparent" HasShadow="False">
+                    <VerticalStackLayout Spacing="10">
+
+                        <!-- Connection row -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                            <!-- Status dot -->
+                            <BoxView WidthRequest="10" HeightRequest="10" CornerRadius="5"
+                                     Color="{Binding IsConnected, Converter={StaticResource BoolToColorConverter}}"
+                                     VerticalOptions="Center" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding SwarmStatus}"
+                                   TextColor="{StaticResource TextColor}"
+                                   FontSize="15" FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+                            <ActivityIndicator Grid.Column="2"
+                                               IsRunning="{Binding IsBusy}"
+                                               IsVisible="{Binding IsBusy}"
+                                               Color="{StaticResource AccentColor}"
+                                               HeightRequest="18" WidthRequest="18" />
+                        </Grid>
+
+                        <!-- Stats row -->
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                            <!-- Node Count -->
+                            <Frame Grid.Column="0"
+                                   BackgroundColor="{StaticResource CardColor}"
+                                   CornerRadius="8" Padding="10,8"
+                                   BorderColor="Transparent" HasShadow="False">
+                                <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
+                                    <Label Text="{Binding NodeCount}"
+                                           TextColor="{StaticResource AccentColor}"
+                                           FontSize="22" FontAttributes="Bold"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="Nodes"
+                                           TextColor="{StaticResource TextMutedColor}"
+                                           FontSize="11"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Frame>
+
+                            <!-- Signals Received -->
+                            <Frame Grid.Column="1"
+                                   BackgroundColor="{StaticResource CardColor}"
+                                   CornerRadius="8" Padding="10,8"
+                                   BorderColor="Transparent" HasShadow="False">
+                                <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
+                                    <Label Text="{Binding SignalsReceived}"
+                                           TextColor="{StaticResource GreenColor}"
+                                           FontSize="22" FontAttributes="Bold"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="Received"
+                                           TextColor="{StaticResource TextMutedColor}"
+                                           FontSize="11"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Frame>
+
+                            <!-- Signals Shared -->
+                            <Frame Grid.Column="2"
+                                   BackgroundColor="{StaticResource CardColor}"
+                                   CornerRadius="8" Padding="10,8"
+                                   BorderColor="Transparent" HasShadow="False">
+                                <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
+                                    <Label Text="{Binding SignalsShared}"
+                                           TextColor="{StaticResource YellowColor}"
+                                           FontSize="22" FontAttributes="Bold"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="Shared"
+                                           TextColor="{StaticResource TextMutedColor}"
+                                           FontSize="11"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Frame>
+                        </Grid>
+
+                        <!-- Last sync time -->
+                        <Label HorizontalTextAlignment="End"
+                               TextColor="{StaticResource TextMutedColor}"
+                               FontSize="11">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Last sync: " />
+                                    <Span Text="{Binding LastSync}"
+                                          FontAttributes="Bold"
+                                          TextColor="{StaticResource TextColor}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ═══ ERROR BANNER ═══ -->
+                <Frame BackgroundColor="#3D1F1F"
+                       CornerRadius="8" Padding="12,10"
+                       BorderColor="#F38BA8" HasShadow="False"
+                       IsVisible="{Binding HasError}">
+                    <Label Text="{Binding ErrorMessage}"
+                           TextColor="#F38BA8"
+                           FontSize="13"
+                           LineBreakMode="WordWrap" />
+                </Frame>
+
+                <!-- ═══ UPLOAD SIGNAL ═══ -->
+                <Frame BackgroundColor="{StaticResource SurfaceColor}"
+                       CornerRadius="12" Padding="14"
+                       BorderColor="Transparent" HasShadow="False">
+                    <VerticalStackLayout Spacing="10">
+
+                        <Label Text="Upload Signal"
+                               TextColor="{StaticResource AccentColor}"
+                               FontSize="16" FontAttributes="Bold" />
+
+                        <Label Text="Enter a threat pattern string, IOC, or raw JSON payload."
+                               TextColor="{StaticResource TextMutedColor}"
+                               FontSize="12" />
+
+                        <!-- Multi-line input -->
+                        <Editor Text="{Binding UploadPayload}"
+                                Placeholder="e.g. 192.168.1.100 or {&quot;pattern&quot;:&quot;cmd.exe /c&quot;, &quot;score&quot;:0.9}"
+                                PlaceholderColor="{StaticResource TextMutedColor}"
+                                TextColor="{StaticResource TextColor}"
+                                BackgroundColor="{StaticResource SurfaceLightColor}"
+                                FontSize="13"
+                                AutoSize="TextChanges"
+                                MinimumHeightRequest="80"
+                                MaximumHeightRequest="160" />
+
+                        <!-- Upload button + busy indicator -->
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                            <Button Grid.Column="0"
+                                    Text="Upload Signal"
+                                    Command="{Binding UploadSignalCommand}"
+                                    IsEnabled="{Binding IsUploading, Converter={StaticResource InvertedBoolConverter}}"
+                                    BackgroundColor="{StaticResource AccentColor}"
+                                    TextColor="#1A1610"
+                                    FontAttributes="Bold"
+                                    FontSize="14"
+                                    HeightRequest="42" />
+                            <ActivityIndicator Grid.Column="1"
+                                               IsRunning="{Binding IsUploading}"
+                                               IsVisible="{Binding IsUploading}"
+                                               Color="{StaticResource AccentColor}"
+                                               HeightRequest="24" WidthRequest="24"
+                                               VerticalOptions="Center" />
+                        </Grid>
+
+                        <!-- Upload status feedback -->
+                        <Label Text="{Binding UploadStatusMessage}"
+                               TextColor="{StaticResource TextMutedColor}"
+                               FontSize="12"
+                               IsVisible="{Binding HasUploadStatus}"
+                               LineBreakMode="WordWrap" />
+
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ═══ RECENT SIGNALS ═══ -->
+                <Frame BackgroundColor="{StaticResource SurfaceColor}"
+                       CornerRadius="12" Padding="14"
+                       BorderColor="Transparent" HasShadow="False">
+                    <VerticalStackLayout Spacing="8">
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Grid.Column="0"
+                                   Text="Recent Signals"
+                                   TextColor="{StaticResource AccentColor}"
+                                   FontSize="16" FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+                            <Button Grid.Column="1"
+                                    Text="Refresh"
+                                    Command="{Binding RefreshStatusCommand}"
+                                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
+                                    BackgroundColor="{StaticResource SurfaceLightColor}"
+                                    TextColor="{StaticResource TextColor}"
+                                    FontSize="11"
+                                    HeightRequest="28"
+                                    Padding="10,0" />
+                        </Grid>
+
+                        <CollectionView ItemsSource="{Binding RecentSignals}"
+                                        SelectionMode="None"
+                                        HeightRequest="320"
+                                        ItemsUpdatingScrollMode="KeepScrollOffset">
+
+                            <CollectionView.EmptyView>
+                                <VerticalStackLayout HorizontalOptions="Center"
+                                                     VerticalOptions="Center"
+                                                     Padding="20,30"
+                                                     Spacing="8">
+                                    <Label Text="No signals yet"
+                                           TextColor="{StaticResource TextMutedColor}"
+                                           FontSize="16" FontAttributes="Bold"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="Sync with the swarm to see shared intelligence."
+                                           TextColor="{StaticResource TextMutedColor}"
+                                           FontSize="13"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </CollectionView.EmptyView>
+
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:SwarmSignalItem">
+                                    <Frame Padding="10,8" Margin="0,2"
+                                           CornerRadius="8" BorderColor="Transparent"
+                                           HasShadow="False"
+                                           BackgroundColor="{StaticResource CardColor}">
+                                        <Grid ColumnDefinitions="Auto,*,Auto,Auto"
+                                              ColumnSpacing="10"
+                                              RowDefinitions="Auto,Auto"
+                                              RowSpacing="3">
+
+                                            <!-- Direction arrow -->
+                                            <Label Grid.Column="0" Grid.RowSpan="2"
+                                                   Text="{Binding DirectionArrow}"
+                                                   TextColor="{Binding DirectionColor}"
+                                                   FontSize="20" FontAttributes="Bold"
+                                                   VerticalOptions="Center" />
+
+                                            <!-- Pattern -->
+                                            <Label Grid.Column="1" Grid.Row="0"
+                                                   Text="{Binding ShortPattern}"
+                                                   TextColor="{StaticResource TextColor}"
+                                                   FontSize="13" FontAttributes="Bold"
+                                                   LineBreakMode="TailTruncation" />
+
+                                            <!-- Source + ID row -->
+                                            <HorizontalStackLayout Grid.Column="1" Grid.Row="1" Spacing="6">
+                                                <Label Text="{Binding Source}"
+                                                       TextColor="{StaticResource TextMutedColor}"
+                                                       FontSize="11" />
+                                                <Label Text="·"
+                                                       TextColor="{StaticResource TextMutedColor}"
+                                                       FontSize="11" />
+                                                <Label Text="{Binding ShortId}"
+                                                       TextColor="{StaticResource TextMutedColor}"
+                                                       FontSize="11"
+                                                       FontFamily="OpenSansRegular" />
+                                            </HorizontalStackLayout>
+
+                                            <!-- Score badge -->
+                                            <Frame Grid.Column="2" Grid.Row="0"
+                                                   BackgroundColor="{Binding ScoreColor}"
+                                                   CornerRadius="4" Padding="6,2"
+                                                   BorderColor="Transparent" HasShadow="False"
+                                                   VerticalOptions="Center">
+                                                <Label Text="{Binding ScoreDisplay}"
+                                                       TextColor="#1A1610"
+                                                       FontSize="11" FontAttributes="Bold" />
+                                            </Frame>
+
+                                            <!-- Timestamp -->
+                                            <Label Grid.Column="3" Grid.Row="0"
+                                                   Text="{Binding Timestamp}"
+                                                   TextColor="{StaticResource TextMutedColor}"
+                                                   FontSize="10"
+                                                   VerticalOptions="Center"
+                                                   HorizontalTextAlignment="End" />
+
+                                        </Grid>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ═══ STORAGE QUOTA ═══ -->
+                <Frame BackgroundColor="{StaticResource SurfaceColor}"
+                       CornerRadius="12" Padding="14,10"
+                       BorderColor="Transparent" HasShadow="False">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Storage Quota"
+                               TextColor="{StaticResource AccentColor}"
+                               FontSize="13" FontAttributes="Bold" />
+                        <Label Text="{Binding QuotaDisplay}"
+                               TextColor="{StaticResource TextMutedColor}"
+                               FontSize="13" />
+                        <ProgressBar Progress="{Binding QuotaPercent, Converter={StaticResource PercentToDecimalConverter}}"
+                                     ProgressColor="#3a86ff"
+                                     BackgroundColor="#333344"
+                                     HeightRequest="6" />
+                        <Label Text="{Binding QuotaDetail}"
+                               TextColor="{StaticResource TextMutedColor}"
+                               FontSize="11" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ═══ STORED FILES ═══ -->
+                <Frame BackgroundColor="{StaticResource SurfaceColor}"
+                       CornerRadius="12" Padding="14"
+                       BorderColor="Transparent" HasShadow="False">
+                    <VerticalStackLayout Spacing="8">
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Grid.Column="0"
+                                   Text="Stored Files"
+                                   TextColor="{StaticResource AccentColor}"
+                                   FontSize="16" FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding FileCount, StringFormat='{0} files'}"
+                                   TextColor="{StaticResource TextMutedColor}"
+                                   FontSize="12"
+                                   VerticalOptions="Center" />
+                        </Grid>
+
+                        <CollectionView ItemsSource="{Binding StoredFiles}"
+                                        SelectionMode="None"
+                                        HeightRequest="240">
+
+                            <CollectionView.EmptyView>
+                                <VerticalStackLayout HorizontalOptions="Center"
+                                                     VerticalOptions="Center"
+                                                     Padding="20,20"
+                                                     Spacing="6">
+                                    <Label Text="No files in swarm storage"
+                                           TextColor="{StaticResource TextMutedColor}"
+                                           FontSize="15" FontAttributes="Bold"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="Upload files through the desktop client or the signal panel above."
+                                           TextColor="{StaticResource TextMutedColor}"
+                                           FontSize="12"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </CollectionView.EmptyView>
+
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:SwarmStorageFileItem">
+                                    <Frame Padding="10,8" Margin="0,2"
+                                           CornerRadius="8" BorderColor="Transparent"
+                                           HasShadow="False"
+                                           BackgroundColor="{StaticResource CardColor}">
+                                        <Grid ColumnDefinitions="*,Auto,Auto,Auto"
+                                              ColumnSpacing="8"
+                                              RowDefinitions="Auto,Auto"
+                                              RowSpacing="2">
+
+                                            <!-- File name -->
+                                            <Label Grid.Column="0" Grid.Row="0"
+                                                   Text="{Binding ShortName}"
+                                                   TextColor="{StaticResource TextColor}"
+                                                   FontSize="13" FontAttributes="Bold"
+                                                   LineBreakMode="TailTruncation" />
+
+                                            <!-- Uploader + ID row -->
+                                            <HorizontalStackLayout Grid.Column="0" Grid.Row="1" Spacing="4">
+                                                <Label Text="{Binding Uploader}"
+                                                       TextColor="{StaticResource TextMutedColor}"
+                                                       FontSize="11" />
+                                                <Label Text="·"
+                                                       TextColor="{StaticResource TextMutedColor}"
+                                                       FontSize="11" />
+                                                <Label Text="{Binding ShortId}"
+                                                       TextColor="{StaticResource TextMutedColor}"
+                                                       FontSize="11" />
+                                            </HorizontalStackLayout>
+
+                                            <!-- Size badge -->
+                                            <Frame Grid.Column="1" Grid.Row="0"
+                                                   BackgroundColor="{StaticResource SurfaceLightColor}"
+                                                   CornerRadius="4" Padding="6,2"
+                                                   BorderColor="Transparent" HasShadow="False"
+                                                   VerticalOptions="Center">
+                                                <Label Text="{Binding SizeDisplay}"
+                                                       TextColor="{StaticResource TextMutedColor}"
+                                                       FontSize="11" />
+                                            </Frame>
+
+                                            <!-- Timestamp -->
+                                            <Label Grid.Column="1" Grid.Row="1"
+                                                   Text="{Binding UploadedAt}"
+                                                   TextColor="{StaticResource TextMutedColor}"
+                                                   FontSize="10"
+                                                   HorizontalTextAlignment="End" />
+
+                                            <!-- Download button -->
+                                            <Button Grid.Column="2" Grid.RowSpan="2"
+                                                    Text="↓"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SwarmStorageViewModel}}, Path=DownloadFileCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="{StaticResource AccentColor}"
+                                                    TextColor="#1A1610"
+                                                    FontAttributes="Bold"
+                                                    FontSize="16"
+                                                    HeightRequest="36"
+                                                    WidthRequest="36"
+                                                    Padding="0"
+                                                    VerticalOptions="Center" />
+
+                                            <!-- Delete button -->
+                                            <Button Grid.Column="3" Grid.RowSpan="2"
+                                                    Text="🗑"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SwarmStorageViewModel}}, Path=DeleteFileCommand}"
+                                                    CommandParameter="{Binding FileId}"
+                                                    BackgroundColor="Transparent"
+                                                    TextColor="#ff4444"
+                                                    FontSize="16"
+                                                    HeightRequest="36"
+                                                    WidthRequest="36"
+                                                    Padding="0"
+                                                    VerticalOptions="Center" />
+
+                                        </Grid>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <!-- Download status feedback -->
+                        <Label Text="{Binding DownloadStatusMessage}"
+                               TextColor="{StaticResource TextMutedColor}"
+                               FontSize="12"
+                               IsVisible="{Binding HasDownloadStatus}"
+                               LineBreakMode="WordWrap" />
+
+                    </VerticalStackLayout>
+                </Frame>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Full-screen loading overlay on first load -->
+        <Grid IsVisible="{Binding IsBusy}"
+              BackgroundColor="#80000000"
+              VerticalOptions="Fill"
+              HorizontalOptions="Fill">
+            <VerticalStackLayout VerticalOptions="Center"
+                                 HorizontalOptions="Center"
+                                 Spacing="16">
+                <ActivityIndicator IsRunning="True"
+                                   Color="{StaticResource AccentColor}"
+                                   HeightRequest="48"
+                                   WidthRequest="48" />
+                <Label Text="Loading swarm data…"
+                       TextColor="{StaticResource TextColor}"
+                       FontSize="15"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

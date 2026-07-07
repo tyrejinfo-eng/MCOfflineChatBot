@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MCOfflineChat.Mobile.ViewModels"
+             xmlns:models="clr-namespace:MCOfflineChat.Mobile.Models"
+             x:Class="MCOfflineChat.Mobile.Views.EngineStatusPage"
+             x:DataType="vm:EngineStatusViewModel"
+             Title="Engine Status">
+
+    <Grid RowDefinitions="Auto,*" Padding="16" RowSpacing="12">
+
+        <!-- Header -->
+        <Frame Style="{StaticResource CardFrame}" Grid.Row="0">
+            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                <Label Text="Engine Status"
+                       Style="{StaticResource TitleLabel}"
+                       HorizontalTextAlignment="Start"
+                       Grid.ColumnSpan="2" />
+                <Label Text="{Binding StatusMessage}"
+                       Style="{StaticResource MutedLabel}"
+                       Grid.Row="1" />
+                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                   IsVisible="{Binding IsBusy}"
+                                   Grid.Row="1" Grid.Column="1"
+                                   HeightRequest="20" WidthRequest="20" />
+                <HorizontalStackLayout Grid.Row="2" Grid.ColumnSpan="2" Spacing="16" Margin="0,8,0,0">
+                    <Label TextColor="{StaticResource GreenColor}" FontSize="13">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding RunningEngines}" FontAttributes="Bold" />
+                                <Span Text=" running" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Label TextColor="{StaticResource TextMutedColor}" FontSize="13">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding TotalEngines}" FontAttributes="Bold" />
+                                <Span Text=" total" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </HorizontalStackLayout>
+            </Grid>
+        </Frame>
+
+        <!-- Engine List -->
+        <RefreshView Grid.Row="1"
+                     Command="{Binding RefreshStatusCommand}"
+                     IsRefreshing="{Binding IsBusy}">
+            <CollectionView ItemsSource="{Binding Engines}"
+                            SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center"
+                                         Padding="40" Spacing="8">
+                        <Label Text="No Engine Data"
+                               TextColor="{StaticResource TextMutedColor}"
+                               FontSize="20" FontAttributes="Bold"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="Connect to view engine statuses."
+                               TextColor="{StaticResource TextMutedColor}"
+                               FontSize="14" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:EngineStatusItem">
+                        <Frame Style="{StaticResource CardFrame}" Margin="0,4">
+                            <Grid ColumnDefinitions="12,*,Auto" ColumnSpacing="12">
+                                <!-- Status dot -->
+                                <Ellipse WidthRequest="12" HeightRequest="12"
+                                         Fill="{Binding StatusColor}"
+                                         VerticalOptions="Center" />
+
+                                <!-- Engine info -->
+                                <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                    <Label Text="{Binding Name}"
+                                           TextColor="{StaticResource TextColor}"
+                                           FontSize="15" FontAttributes="Bold" />
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Label Text="{Binding StatusText}"
+                                               TextColor="{Binding StatusColor}"
+                                               FontSize="12" />
+                                        <Label Text="{Binding Type}"
+                                               TextColor="{StaticResource TextMutedColor}"
+                                               FontSize="12" />
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+
+                                <!-- Stats -->
+                                <VerticalStackLayout Grid.Column="2" VerticalOptions="Center" Spacing="2">
+                                    <Label Text="{Binding EventsDisplay}"
+                                           TextColor="{StaticResource AccentColor}"
+                                           FontSize="11" HorizontalTextAlignment="End" />
+                                    <Label Text="{Binding Uptime}"
+                                           TextColor="{StaticResource TextMutedColor}"
+                                           FontSize="10" HorizontalTextAlignment="End" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+    </Grid>
+</ContentPage>
