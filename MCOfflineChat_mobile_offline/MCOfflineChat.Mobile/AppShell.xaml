@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:views="clr-namespace:MCOfflineChat.Mobile.Views"
+       x:Class="MCOfflineChat.Mobile.AppShell"
+       Title="MC Offline Chat"
+       Shell.BackgroundColor="{StaticResource SurfaceColor}"
+       Shell.ForegroundColor="{StaticResource TextColor}"
+       Shell.TabBarBackgroundColor="{StaticResource SurfaceColor}"
+       Shell.TabBarForegroundColor="{StaticResource AccentColor}"
+       Shell.TabBarUnselectedColor="{StaticResource TextMutedColor}">
+
+    <TabBar>
+        <ShellContent Title="Dashboard" Route="DashboardPage" Icon="icon_dashboard.svg" ContentTemplate="{DataTemplate views:DashboardPage}" />
+        <ShellContent Title="Chat" Route="ChatPage" Icon="icon_chat.svg" ContentTemplate="{DataTemplate views:ChatPage}" />
+        <ShellContent Title="Documents" Route="DocumentsPage" Icon="icon_scanner.svg" ContentTemplate="{DataTemplate views:DocumentsPage}" />
+        <ShellContent Title="Stories" Route="StoriesPage" Icon="icon_dashboard.svg" ContentTemplate="{DataTemplate views:StoriesPage}" />
+        <ShellContent Title="History" Route="HistoryPage" Icon="icon_scanner.svg" ContentTemplate="{DataTemplate views:HistoryPage}" />
+        <ShellContent Title="Git Search" Route="GitPage" Icon="icon_scanner.svg" ContentTemplate="{DataTemplate views:GitPage}" />
+        <ShellContent Title="Telemetry" Route="TelemetryPage" Icon="icon_scanner.svg" ContentTemplate="{DataTemplate views:TelemetryPage}" />
+        <ShellContent Title="Settings" Route="SettingsPage" Icon="icon_settings.svg" ContentTemplate="{DataTemplate views:SettingsPage}" />
+    </TabBar>
+</Shell>
